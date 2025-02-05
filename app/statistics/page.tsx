@@ -1,17 +1,28 @@
-import { promises as fs } from 'fs'
-import path from 'path'
-import { WordsData } from '@/types'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { Word } from '@/types'
 import { Statistics } from '@/components/statistics/Statistics'
 
-async function getWords() {
-  const filePath = path.join(process.cwd(), 'data', 'words.json')
-  const fileContents = await fs.readFile(filePath, 'utf8')
-  const data: WordsData = JSON.parse(fileContents)
-  return data.words
-}
+export default function StatisticsPage() {
+  const [mounted, setMounted] = useState(false)
+  const [words, setWords] = useState<Word[]>([])
 
-export default async function StatisticsPage() {
-  const words = await getWords()
+  useEffect(() => {
+    fetch('/api/words')
+      .then(res => res.json())
+      .then(data => setWords(data))
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <div className="animate-pulse">
+        <div className="h-8 bg-muted rounded w-1/4 mb-4" />
+        <div className="h-4 bg-muted rounded w-1/2" />
+      </div>
+    )
+  }
 
   return (
     <div className="container py-8 px-4 sm:px-6 md:px-8">
