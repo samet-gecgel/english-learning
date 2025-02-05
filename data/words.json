@@ -1,0 +1,112 @@
+{
+  "words": [
+    {
+      "id": "1",
+      "word": "book",
+      "translation": "kitap",
+      "level": "A1",
+      "category": "objects",
+      "pronunciation": "bʊk",
+      "usageNotes": "Both a noun and a verb",
+      "sentences": [
+        "I read a book yesterday.",
+        "Can you book a table for dinner?",
+        "She is booking her flight tickets."
+      ],
+      "irregularForms": {
+        "present": "book",
+        "past": "booked",
+        "pastParticiple": "booked"
+      },
+      "synonyms": [
+        "novel",
+        "text",
+        "publication"
+      ],
+      "antonyms": [],
+      "wordFamily": [
+        "noun",
+        "verb"
+      ],
+      "examples": {},
+      "dateAdded": "2024-01-01",
+      "lastReviewed": null,
+      "difficulty": 1
+    },
+    {
+      "id": "2",
+      "word": "run",
+      "translation": "koşmak",
+      "level": "A1",
+      "category": "actions",
+      "sentences": [
+        "I run every morning.",
+        "The children are running in the park.",
+        "He runs his own business."
+      ],
+      "irregularForms": {
+        "present": "run",
+        "past": "ran",
+        "pastParticiple": "run"
+      },
+      "antonyms": [
+        "walk",
+        "stop"
+      ],
+      "synonyms": [
+        "sprint",
+        "jog"
+      ],
+      "pronunciation": "rʌn",
+      "usageNotes": "Can be used both literally and figuratively",
+      "dateAdded": "2024-03-20",
+      "lastReviewed": null,
+      "difficulty": 2,
+      "wordFamily": [
+        "verb",
+        "noun"
+      ],
+      "examples": {
+        "verb": [
+          "run a race",
+          "run errands"
+        ],
+        "noun": [
+          "going for a run",
+          "a run of bad luck"
+        ]
+      }
+    },
+    {
+      "id": "4ab442e6-f60b-47cb-ac51-c66ceab52fc4",
+      "word": "happy",
+      "translation": "mutlu",
+      "level": "A1",
+      "pronunciation": "hæpi",
+      "usageNotes": "Used to describe a feeling of pleasure or contentment.",
+      "sentences": [
+        "She felt very happy after receiving the good news.",
+        "They are happy to see their friends again.",
+        "A happy smile can brighten someone's day."
+      ],
+      "irregularForms": null,
+      "synonyms": [
+        "joyful",
+        "cheerful"
+      ],
+      "antonyms": [
+        "sad",
+        "unhappy"
+      ],
+      "wordFamily": [
+        "adjective",
+        "noun",
+        "adverb"
+      ],
+      "examples": {},
+      "dateAdded": "2025-02-05",
+      "lastReviewed": null,
+      "difficulty": 1
+    }
+  ]
+}
