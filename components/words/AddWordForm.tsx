@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { PlusIcon } from "@heroicons/react/24/outline"
-import { Word } from "@/types"
+import { Word, WordFormData } from "@/types"
 import { useRouter } from 'next/navigation'
 import { WordForm } from "./WordForm"
 import { useState } from "react"
@@ -10,24 +10,6 @@ import { useState } from "react"
 interface AddWordFormProps {
   initialWord?: Word
   onSuccess?: () => void
-}
-
-interface WordFormData {
-  word: string
-  translation: string
-  level: string
-  pronunciation: string
-  usageNotes: string
-  sentences: string[]
-  irregularForms: {
-    present: string
-    past: string
-    pastParticiple: string
-  }
-  synonyms: string[]
-  antonyms: string[]
-  wordFamily: ('noun' | 'verb' | 'adjective' | 'adverb')[]
-  examples: Record<string, string[]>
 }
 
 export function AddWordForm({ initialWord, onSuccess }: AddWordFormProps) {
@@ -50,10 +32,11 @@ export function AddWordForm({ initialWord, onSuccess }: AddWordFormProps) {
         sentences: formData.sentences.filter(Boolean),
         synonyms: formData.synonyms.filter(Boolean),
         antonyms: formData.antonyms.filter(Boolean),
-        irregularForms: Object.values(formData.irregularForms).some(Boolean)
+        irregularForms: Object.values(formData.irregularForms || {}).some(Boolean)
           ? formData.irregularForms
           : null,
-        examples: Object.keys(formData.examples).length > 0 
+        examples: Object.keys(formData.examples || {}).length > 0 
+
           ? formData.examples 
           : {}
       }

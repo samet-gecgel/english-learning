@@ -62,13 +62,27 @@ export function DailyPractice({ words }: DailyPracticeProps) {
     localStorage.setItem('dailyProgress', JSON.stringify(newProgress))
   }, [words])
 
-  const markWordAsLearned = (wordId: string) => {
-    const newProgress = {
-      ...progress,
-      wordsLearned: [...progress.wordsLearned, wordId]
+  const markWordAsLearned = async (wordId: string) => {
+    try {
+      // Kelimeyi güncelle
+      await fetch(`/api/words/${wordId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lastReviewed: new Date().toISOString()
+        })
+      })
+
+      // Local state'i güncelle
+      const newProgress = {
+        ...progress,
+        wordsLearned: [...progress.wordsLearned, wordId]
+      }
+      setProgress(newProgress)
+      localStorage.setItem('dailyProgress', JSON.stringify(newProgress))
+    } catch (error) {
+      console.error('Failed to mark word as learned:', error)
     }
-    setProgress(newProgress)
-    localStorage.setItem('dailyProgress', JSON.stringify(newProgress))
   }
 
   // Server-side rendering için loading state
@@ -105,6 +119,11 @@ export function DailyPractice({ words }: DailyPracticeProps) {
               <div>
                 <h3 className="text-lg font-medium">{word.word}</h3>
                 <p className="text-muted-foreground">{word.translation}</p>
+                {word.pronunciation && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    /{word.pronunciation}/
+                  </p>
+                )}
               </div>
               <Button
                 variant="outline"
@@ -114,6 +133,9 @@ export function DailyPractice({ words }: DailyPracticeProps) {
                 {progress.wordsLearned.includes(word.id) ? 'Learned' : 'Mark as Learned'}
               </Button>
             </div>
+            {word.usageNotes && (
+              <p className="mt-2 text-sm">{word.usageNotes}</p>
+            )}
           </div>
         ))}
       </div>

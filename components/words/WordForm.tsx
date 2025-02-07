@@ -1,29 +1,12 @@
 'use client'
 
-import { Word } from "@/types"
+import { Word, WordFormData } from "@/types"
 import { useState } from "react"
+
 
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const
 type WordType = 'noun' | 'verb' | 'adjective' | 'adverb'
 const WORD_TYPES = ['noun', 'verb', 'adjective', 'adverb'] as const
-
-interface WordFormData {
-  word: string
-  translation: string
-  level: string
-  pronunciation: string
-  usageNotes: string
-  sentences: string[]
-  irregularForms: {
-    present: string
-    past: string
-    pastParticiple: string
-  }
-  synonyms: string[]
-  antonyms: string[]
-  wordFamily: ('noun' | 'verb' | 'adjective' | 'adverb')[]
-  examples: Record<string, string[]>
-}
 
 interface WordFormProps {
   initialWord?: Word
@@ -31,35 +14,49 @@ interface WordFormProps {
   submitLabel: string
 }
 
+interface IrregularForms {
+  present: string
+  past: string
+  pastParticiple: string
+}
+
 export function WordForm({ initialWord, onSubmit, submitLabel }: WordFormProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Omit<WordFormData, 'irregularForms'> & {
+    irregularForms: IrregularForms
+  }>({
     word: initialWord?.word || '',
     translation: initialWord?.translation || '',
     level: initialWord?.level || 'A1',
     pronunciation: initialWord?.pronunciation || '',
     usageNotes: initialWord?.usageNotes || '',
     sentences: Array.from({ length: 3 }, (_, i) => initialWord?.sentences?.[i] || ''),
-    irregularForms: initialWord?.irregularForms || {
-      present: '',
-      past: '',
-      pastParticiple: ''
-    },
+    irregularForms: initialWord?.irregularForms ? 
+      (JSON.parse(JSON.stringify(initialWord.irregularForms)) as unknown as IrregularForms) : 
+      { present: '', past: '', pastParticiple: '' },
     synonyms: Array.from({ length: 3 }, (_, i) => initialWord?.synonyms?.[i] || ''),
     antonyms: Array.from({ length: 3 }, (_, i) => initialWord?.antonyms?.[i] || ''),
-    wordFamily: initialWord?.wordFamily || [] as WordType[],
+    wordFamily: initialWord?.wordFamily?.map(String) || [],
     examples: initialWord?.examples || {} as Record<string, string[]>
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    const formData = new FormData(e.target as HTMLFormElement)
     
-    const cleanedData = {
-      ...formData,
-      sentences: formData.sentences.filter(Boolean),
-      synonyms: formData.synonyms.filter(Boolean),
-      antonyms: formData.antonyms.filter(Boolean)
+    const cleanedData: WordFormData = {
+      word: formData.get('word')?.toString() || '',
+      translation: formData.get('translation')?.toString() || '',
+      level: formData.get('level')?.toString() || '',
+      pronunciation: formData.get('pronunciation')?.toString() || '',
+      usageNotes: formData.get('usageNotes')?.toString() || '',
+      sentences: formData.get('sentences')?.toString().split('\n').filter(Boolean) || [],
+      synonyms: formData.get('synonyms')?.toString().split(',').map(s => s.trim()).filter(Boolean) || [],
+      antonyms: formData.get('antonyms')?.toString().split(',').map(s => s.trim()).filter(Boolean) || [],
+      wordFamily: (formData.get('wordFamily')?.toString().split(',').map(s => s.trim()) || []) as ("noun" | "verb" | "adjective" | "adverb")[],
+      irregularForms: formData.get('irregularForms') ? JSON.parse(formData.get('irregularForms')?.toString() || '{}') : null,
+      examples: formData.get('examples') ? JSON.parse(formData.get('examples')?.toString() || '{}') : null
     }
-    
+
     await onSubmit(cleanedData)
   }
 
@@ -132,31 +129,34 @@ export function WordForm({ initialWord, onSubmit, submitLabel }: WordFormProps) 
           <input
             type="text"
             placeholder="Present"
-            value={formData.irregularForms.present}
+            value={formData.irregularForms?.present}
             onChange={e => setFormData(prev => ({
               ...prev,
               irregularForms: { ...prev.irregularForms, present: e.target.value }
             }))}
+
             className="w-full rounded-md border p-2"
           />
           <input
             type="text"
             placeholder="Past"
-            value={formData.irregularForms.past}
+            value={formData.irregularForms?.past}
             onChange={e => setFormData(prev => ({
               ...prev,
               irregularForms: { ...prev.irregularForms, past: e.target.value }
             }))}
+
             className="w-full rounded-md border p-2"
           />
           <input
             type="text"
             placeholder="Past Participle"
-            value={formData.irregularForms.pastParticiple}
+            value={formData.irregularForms?.pastParticiple}
             onChange={e => setFormData(prev => ({
               ...prev,
               irregularForms: { ...prev.irregularForms, pastParticiple: e.target.value }
             }))}
+
             className="w-full rounded-md border p-2"
           />
         </div>

@@ -1,28 +1,66 @@
-import { Word, Topic, Note, JournalEntry } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
-export type { Word, Topic, Note, JournalEntry }
+// Prisma'nın ürettiği tipleri genişletelim
+export type Word = Prisma.WordGetPayload<{
+  select: {
+    id: true
+    word: true
+    translation: true
+    level: true
+    pronunciation: true
+    usageNotes: true
+    sentences: true
+    irregularForms: true
+    synonyms: true
+    antonyms: true
+    wordFamily: true
+    examples: true
+    dateAdded: true
+    lastReviewed: true
+    difficulty: true
+  }
+}>
 
-export interface Word {
-  id: string;
-  word: string;
-  translation: string;
-  level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
-  category: string;
-  pronunciation: string;
-  usageNotes: string;
-  sentences: string[];
-  irregularForms: {
-    present: string;
-    past: string;
-    pastParticiple: string;
-  } | null;
-  synonyms: string[];
-  antonyms: string[];
-  wordFamily: ('noun' | 'verb' | 'adjective' | 'adverb')[];
-  examples: Record<string, string[]>;
-  dateAdded: string;
-  lastReviewed: string | null;
-  difficulty: number;
+export type Topic = Prisma.TopicGetPayload<{
+  include: {
+    notes: true
+  }
+}>
+
+export type Note = Prisma.NoteGetPayload<{
+  select: {
+    id: true
+    content: true
+    dateCreated: true
+    topicId: true
+  }
+}>
+
+export type JournalEntry = Prisma.JournalEntryGetPayload<{
+  select: {
+    id: true
+    date: true
+    title: true
+    content: true
+    mood: true
+    learningProgress: true
+    tags: true
+    createdAt: true
+  }
+}>
+
+export interface WordFormData {
+  word: string
+  translation: string
+  level: string
+  pronunciation: string | undefined
+  usageNotes: string | undefined
+  sentences: string[]
+  irregularForms: Prisma.JsonValue
+  synonyms: string[]
+  antonyms: string[]
+  wordFamily: string[]
+  examples: Prisma.JsonValue
 }
 
 export interface WordsData {
@@ -31,38 +69,4 @@ export interface WordsData {
 
 export interface JournalData {
   entries: JournalEntry[]
-}
-
-export interface WordFormData {
-  word: string
-  translation: string
-  level: string
-  pronunciation: string
-  usageNotes: string
-  sentences: string[]
-  irregularForms: {
-    present: string
-    past: string
-    pastParticiple: string
-  } | null
-  synonyms: string[]
-  antonyms: string[]
-  wordFamily: ('noun' | 'verb' | 'adjective' | 'adverb')[]
-  examples: Record<string, string[]>
-}
-
-export interface Topic {
-  id: string
-  title: string
-  description: string
-  category: string
-  notes: Note[]
-  dateCreated: string
-  lastUpdated: string | null
-}
-
-export interface Note {
-  id: string
-  content: string
-  dateCreated: string
 } 
