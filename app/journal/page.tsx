@@ -17,4 +17,7 @@ export default async function JournalPage() {
       <JournalClientWrapper entries={entries} />
     </div>
   )
-} 
+}
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0 
