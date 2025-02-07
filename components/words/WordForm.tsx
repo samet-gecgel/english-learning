@@ -2,6 +2,7 @@
 
 import { Word, WordFormData } from "@/types"
 import { useState } from "react"
+import { Prisma } from "@prisma/client"
 
 
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const
@@ -41,20 +42,22 @@ export function WordForm({ initialWord, onSubmit, submitLabel }: WordFormProps) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
     
+    // Form verilerini doğru şekilde hazırla
     const cleanedData: WordFormData = {
-      word: formData.get('word')?.toString() || '',
-      translation: formData.get('translation')?.toString() || '',
-      level: formData.get('level')?.toString() || '',
-      pronunciation: formData.get('pronunciation')?.toString() || '',
-      usageNotes: formData.get('usageNotes')?.toString() || '',
-      sentences: formData.get('sentences')?.toString().split('\n').filter(Boolean) || [],
-      synonyms: formData.get('synonyms')?.toString().split(',').map(s => s.trim()).filter(Boolean) || [],
-      antonyms: formData.get('antonyms')?.toString().split(',').map(s => s.trim()).filter(Boolean) || [],
-      wordFamily: (formData.get('wordFamily')?.toString().split(',').map(s => s.trim()) || []) as ("noun" | "verb" | "adjective" | "adverb")[],
-      irregularForms: formData.get('irregularForms') ? JSON.parse(formData.get('irregularForms')?.toString() || '{}') : null,
-      examples: formData.get('examples') ? JSON.parse(formData.get('examples')?.toString() || '{}') : null
+      word: formData.word,
+      translation: formData.translation,
+      level: formData.level,
+      pronunciation: formData.pronunciation,
+      usageNotes: formData.usageNotes,
+      sentences: formData.sentences.filter(Boolean),
+      synonyms: formData.synonyms.filter(Boolean),
+      antonyms: formData.antonyms.filter(Boolean),
+      wordFamily: formData.wordFamily,
+      irregularForms: Object.values(formData.irregularForms).some(Boolean)
+        ? formData.irregularForms as unknown as Prisma.JsonValue 
+        : null,
+      examples: {} // Şimdilik boş obje olarak bırakıyoruz
     }
 
     await onSubmit(cleanedData)
