@@ -13,6 +13,7 @@ const links = [
   { href: "/daily", label: "Daily Practice" },
   { href: "/statistics", label: "Statistics" },
   { href: "/journal", label: "My Journal" },
+  { href: "/study-notes", label: "Study Notes" },
 ]
 
 export default function Header() {

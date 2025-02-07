@@ -38,21 +38,29 @@ export function WordForm({ initialWord, onSubmit, submitLabel }: WordFormProps) 
     level: initialWord?.level || 'A1',
     pronunciation: initialWord?.pronunciation || '',
     usageNotes: initialWord?.usageNotes || '',
-    sentences: initialWord?.sentences?.length ? initialWord.sentences : ['', '', ''],
+    sentences: Array.from({ length: 3 }, (_, i) => initialWord?.sentences?.[i] || ''),
     irregularForms: initialWord?.irregularForms || {
       present: '',
       past: '',
       pastParticiple: ''
     },
-    synonyms: initialWord?.synonyms?.length ? initialWord.synonyms : ['', '', ''],
-    antonyms: initialWord?.antonyms?.length ? initialWord.antonyms : ['', '', ''],
+    synonyms: Array.from({ length: 3 }, (_, i) => initialWord?.synonyms?.[i] || ''),
+    antonyms: Array.from({ length: 3 }, (_, i) => initialWord?.antonyms?.[i] || ''),
     wordFamily: initialWord?.wordFamily || [] as WordType[],
     examples: initialWord?.examples || {} as Record<string, string[]>
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await onSubmit(formData)
+    
+    const cleanedData = {
+      ...formData,
+      sentences: formData.sentences.filter(Boolean),
+      synonyms: formData.synonyms.filter(Boolean),
+      antonyms: formData.antonyms.filter(Boolean)
+    }
+    
+    await onSubmit(cleanedData)
   }
 
   return (

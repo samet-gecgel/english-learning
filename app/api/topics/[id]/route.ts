@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// Kelime güncelleme
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
@@ -10,21 +9,26 @@ export async function PUT(
     const { id } = params
     const data = await request.json()
 
-    const word = await prisma.word.update({
+    const topic = await prisma.topic.update({
       where: { id },
-      data
+      data: {
+        ...data,
+        lastUpdated: new Date()
+      },
+      include: {
+        notes: true
+      }
     })
 
-    return NextResponse.json(word)
+    return NextResponse.json(topic)
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to update word' },
+      { error: 'Failed to update topic' },
       { status: 500 }
     )
   }
 }
 
-// Kelime silme
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
@@ -32,15 +36,15 @@ export async function DELETE(
   try {
     const { id } = params
 
-    await prisma.word.delete({
+    await prisma.topic.delete({
       where: { id }
     })
 
     return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to delete word' },
+      { error: 'Failed to delete topic' },
       { status: 500 }
     )
   }
-}
+} 

@@ -36,9 +36,9 @@ export function WordFilters({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+    <div className="flex flex-col w-full sm:flex-row gap-4">
       {/* Search */}
-      <div className="relative flex-1 max-w-md">
+      <div className="relative flex-1">
         <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <input
           type="text"
@@ -49,32 +49,34 @@ export function WordFilters({
         />
       </div>
 
-      {/* Level Filters */}
-      <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 -mx-4 sm:mx-0 px-4 sm:px-0">
-        {levels.map((level) => (
-          <button
-            key={level}
-            onClick={() => onLevelChange(level)}
-            className={`rounded-lg px-3.5 py-2 text-sm border whitespace-nowrap transition-colors
-              ${activeLevel === level 
-                ? 'bg-primary text-primary-foreground' 
-                : 'hover:bg-accent/50'}`}
-          >
-            {level}
-          </button>
-        ))}
-      </div>
+      <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+        {/* Level Filters */}
+        <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 -mx-4 sm:mx-0 px-4 sm:px-0">
+          {levels.map((level) => (
+            <button
+              key={level}
+              onClick={() => onLevelChange(level)}
+              className={`rounded-lg px-3.5 py-2 text-sm border whitespace-nowrap transition-colors
+                ${activeLevel === level 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'hover:bg-accent/50'}`}
+            >
+              {level}
+            </button>
+          ))}
+        </div>
 
-      {/* Sort */}
-      <select 
-        className="rounded-lg border px-3 py-2 bg-background"
-        value={activeSort}
-        onChange={(e) => onSortChange(e.target.value)}
-      >
-        <option value="alphabetical">A-Z</option>
-        <option value="difficulty">Difficulty</option>
-        <option value="newest">Newest</option>
-      </select>
+        {/* Sort */}
+        <select 
+          className="rounded-lg border px-3 py-2 bg-background min-w-[120px]"
+          value={activeSort}
+          onChange={(e) => onSortChange(e.target.value)}
+        >
+          <option value="alphabetical">A-Z</option>
+          <option value="difficulty">Difficulty</option>
+          <option value="newest">Newest</option>
+        </select>
+      </div>
     </div>
   )
 } 

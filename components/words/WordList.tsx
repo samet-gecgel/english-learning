@@ -43,7 +43,7 @@ export function WordList({ initialWords }: WordListProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <WordFilters 
           onSearchChange={setSearch}
           onLevelChange={setActiveLevel}
@@ -54,7 +54,7 @@ export function WordList({ initialWords }: WordListProps) {
         <AddWordForm />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
         {filteredWords.map((word) => (
           <WordCard 
             key={word.id} 
