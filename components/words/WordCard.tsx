@@ -16,6 +16,12 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 
+interface IrregularForms {
+  present: string
+  past: string
+  pastParticiple: string
+}
+
 export function WordCard({ word, onEdit }: { word: Word; onEdit?: (word: Word) => void }) {
   const router = useRouter()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -170,9 +176,9 @@ export function WordCard({ word, onEdit }: { word: Word; onEdit?: (word: Word) =
                 <h4 className="text-sm font-semibold text-primary mb-3">Irregular Forms</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
-                    { label: 'Present', value: word.irregularForms.present },
-                    { label: 'Past', value: word.irregularForms.past },
-                    { label: 'Past Participle', value: word.irregularForms.pastParticiple }
+                    { label: 'Present', value: ((word.irregularForms as unknown) as IrregularForms).present },
+                    { label: 'Past', value: ((word.irregularForms as unknown) as IrregularForms).past },
+                    { label: 'Past Participle', value: ((word.irregularForms as unknown) as IrregularForms).pastParticiple }
                   ].map((form, index) => (
                     <div key={index} className="bg-background rounded-lg p-3">
                       <span className="text-xs text-muted-foreground block mb-1">{form.label}</span>

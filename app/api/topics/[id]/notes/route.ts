@@ -22,7 +22,7 @@ export async function POST(
     })
 
     return NextResponse.json(note, { status: 201 })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to add note' },
       { status: 500 }

@@ -21,11 +21,16 @@ export type Word = Prisma.WordGetPayload<{
   }
 }>
 
-export type Topic = Prisma.TopicGetPayload<{
-  include: {
-    notes: true
-  }
-}>
+export type Topic = Omit<
+  Prisma.TopicGetPayload<{ include: { notes: true } }>,
+  'dateCreated' | 'lastUpdated' | 'notes'
+> & {
+  dateCreated: string
+  lastUpdated: string | null
+  notes: Array<Omit<Prisma.NoteGetPayload<object>, 'dateCreated'> & {
+    dateCreated: string
+  }>
+}
 
 export type Note = Prisma.NoteGetPayload<{
   select: {
@@ -36,18 +41,19 @@ export type Note = Prisma.NoteGetPayload<{
   }
 }>
 
-export type JournalEntry = Prisma.JournalEntryGetPayload<{
-  select: {
-    id: true
-    date: true
-    title: true
-    content: true
-    mood: true
-    learningProgress: true
-    tags: true
-    createdAt: true
-  }
-}>
+export interface LearningProgress {
+  practiceTime: number
+  newWords: string[]
+  notes: string
+}
+
+export type JournalEntry = Omit<
+  Prisma.JournalEntryGetPayload<object>, 
+  'learningProgress'
+> & {
+  learningProgress: LearningProgress
+}
+
 
 export interface WordFormData {
   word: string

@@ -16,7 +16,7 @@ export async function PUT(
     })
 
     return NextResponse.json(word)
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to update word' },
       { status: 500 }
@@ -37,10 +37,11 @@ export async function DELETE(
     })
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to delete word' },
       { status: 500 }
     )
   }
+
 }

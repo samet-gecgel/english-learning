@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { BookOpen, Clock } from 'lucide-react'
 import { format } from 'date-fns'
+import { Note } from '@/types'
 
 interface Topic {
   id: string
@@ -12,7 +13,7 @@ interface Topic {
   category: string
   dateCreated: string
   lastUpdated: string | null
-  notes: any[]
+  notes: Note[]
 }
 
 export function TopicsList({ topics }: { topics: Topic[] }) {

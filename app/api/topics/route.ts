@@ -12,12 +12,13 @@ export async function GET() {
       }
     })
     return NextResponse.json(topics)
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch topics' },
       { status: 500 }
     )
   }
+
 }
 
 export async function POST(request: Request) {
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
     })
 
     return NextResponse.json(topic, { status: 201 })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create topic' },
       { status: 500 }

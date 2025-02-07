@@ -21,12 +21,13 @@ export async function PUT(
     })
 
     return NextResponse.json(topic)
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to update topic' },
       { status: 500 }
     )
   }
+
 }
 
 export async function DELETE(
@@ -41,7 +42,7 @@ export async function DELETE(
     })
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to delete topic' },
       { status: 500 }

@@ -1,15 +1,6 @@
-import { promises as fs } from 'fs'
-import path from 'path'
 import { NextResponse } from 'next/server'
-import { JournalData, JournalEntry } from '@/types'
+
 import { prisma } from '@/lib/prisma'
-
-const journalPath = path.join(process.cwd(), 'data', 'journal.json')
-
-async function getJournalData(): Promise<JournalData> {
-  const fileContents = await fs.readFile(journalPath, 'utf8')
-  return JSON.parse(fileContents)
-}
 
 export async function GET() {
   try {
@@ -19,7 +10,7 @@ export async function GET() {
       }
     })
     return NextResponse.json(entries)
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch entries' },
       { status: 500 }
@@ -38,12 +29,13 @@ export async function POST(request: Request) {
       }
     })
     return NextResponse.json(entry, { status: 201 })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create entry' },
       { status: 500 }
     )
   }
+
 }
 
 export async function PUT(request: Request) {
@@ -60,9 +52,10 @@ export async function PUT(request: Request) {
       }
     })
     return NextResponse.json(entry)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update entry' }, { status: 500 })
   }
+
 }
 
 export async function DELETE(request: Request) {
@@ -79,7 +72,8 @@ export async function DELETE(request: Request) {
     })
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to delete entry' }, { status: 500 })
   }
+
 } 

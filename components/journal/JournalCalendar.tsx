@@ -9,6 +9,12 @@ import { Badge } from '@/components/ui/badge'
 import { Clock, Book, Tag, Sparkles } from 'lucide-react'
 import { JournalEntryDialog } from './JournalEntryDialog'
 
+interface LearningProgress {
+  practiceTime: number
+  newWords: string[]
+  notes: string
+}
+
 interface JournalCalendarProps {
   entries: JournalEntry[]
 }
@@ -24,7 +30,8 @@ export function JournalCalendar({ entries }: JournalCalendarProps) {
   const handleSelect = (date: Date | undefined) => {
     setDate(date)
     if (date) {
-      const entry = entries.find(e => e.date === format(date, 'yyyy-MM-dd'))
+      const formattedDate = format(date, 'yyyy-MM-dd')
+      const entry = entries.find(e => format(new Date(e.date), 'yyyy-MM-dd') === formattedDate)
       setSelectedEntry(entry || null)
     }
   }
@@ -40,7 +47,7 @@ export function JournalCalendar({ entries }: JournalCalendarProps) {
             className="rounded-md"
             modifiers={{
               hasEntry: (date) => 
-                entries.some(e => e.date === format(date, 'yyyy-MM-dd'))
+                entries.some(e => format(new Date(e.date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd'))
             }}
             modifiersStyles={{
               hasEntry: { 
@@ -97,7 +104,7 @@ export function JournalCalendar({ entries }: JournalCalendarProps) {
                   <h4 className="font-medium">Practice Time</h4>
                 </div>
                 <p className="text-2xl font-bold">
-                  {selectedEntry.learningProgress.practiceTime} min
+                  {((selectedEntry.learningProgress as unknown) as LearningProgress)?.practiceTime} min
                 </p>
               </Card>
 
@@ -107,7 +114,7 @@ export function JournalCalendar({ entries }: JournalCalendarProps) {
                   <h4 className="font-medium">New Words</h4>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {selectedEntry.learningProgress.newWords.map(word => (
+                  {((selectedEntry.learningProgress as unknown) as LearningProgress)?.newWords.map(word => (
                     <Badge key={word} variant="secondary">
                       {word}
                     </Badge>
@@ -122,7 +129,7 @@ export function JournalCalendar({ entries }: JournalCalendarProps) {
                 <h4 className="font-medium">Learning Notes</h4>
               </div>
               <p className="text-muted-foreground">
-                {selectedEntry.learningProgress.notes}
+                {((selectedEntry.learningProgress as unknown) as LearningProgress)?.notes}
               </p>
             </div>
 

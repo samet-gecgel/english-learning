@@ -9,12 +9,13 @@ export async function GET() {
       }
     })
     return NextResponse.json(words)
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch words' },
       { status: 500 }
     )
   }
+
 }
 
 export async function POST(request: Request) {

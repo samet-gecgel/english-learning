@@ -41,10 +41,11 @@ export function JournalEntryDialog({ entry, mode = 'create', onClose }: JournalE
     title: entry?.title ?? '',
     content: entry?.content ?? '',
     mood: entry?.mood ?? 'neutral',
-    practiceTime: entry?.learningProgress.practiceTime?.toString() ?? '',
-    newWords: entry?.learningProgress.newWords?.join(', ') ?? '',
-    notes: entry?.learningProgress.notes ?? '',
+    practiceTime: entry?.learningProgress?.practiceTime?.toString() ?? '',
+    newWords: entry?.learningProgress?.newWords?.join(', ') ?? '',
+    notes: entry?.learningProgress?.notes ?? '',
     tags: entry?.tags?.join(', ') ?? ''
+
   }))
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

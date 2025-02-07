@@ -60,7 +60,7 @@ export function TopicNotes({ topic }: { topic: Topic }) {
 
       if (!response.ok) throw new Error()
       
-      const data = await response.json()
+      //const data = await response.json()
       
       toast({
         title: "Note Added",
