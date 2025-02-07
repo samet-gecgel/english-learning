@@ -1,0 +1,15 @@
+{
+  "buildCommand": "prisma generate && next build",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "env": {
+    "PRISMA_GENERATE_DATAPROXY": "true"
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ]
+} 

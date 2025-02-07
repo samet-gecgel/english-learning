@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const runtime = 'nodejs'
+
 // Kelime güncelleme
 export async function PUT(
   request: Request,
