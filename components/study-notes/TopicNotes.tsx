@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import { Pencil, Trash2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { Topic, Note } from '@prisma/client'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,23 +21,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
-interface Note {
-  id: string
-  content: string
-  dateCreated: string
+interface TopicWithNotes extends Topic {
+  notes: Note[];
 }
 
-interface Topic {
-  id: string
-  title: string
-  description: string
-  category: string
-  notes: Note[]
-  dateCreated: string
-  lastUpdated: string | null
-}
-
-export function TopicNotes({ topic }: { topic: Topic }) {
+export function TopicNotes({ topic: initialTopic }: { topic: TopicWithNotes }) {
+  const [topic, setTopic] = useState(initialTopic)
   const [newNote, setNewNote] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [editedTopic, setEditedTopic] = useState(topic)
@@ -55,12 +45,20 @@ export function TopicNotes({ topic }: { topic: Topic }) {
       const response = await fetch(`/api/topics/${topic.id}/notes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: newNote })
+        body: JSON.stringify({ content: newNote.trim() })
       })
 
-      if (!response.ok) throw new Error()
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to add note')
+      }
       
-      //const data = await response.json()
+      const newNoteData = await response.json()
+      setTopic(prev => ({
+        ...prev,
+        notes: [...prev.notes, newNoteData],
+        lastUpdated: new Date()
+      }))
       
       toast({
         title: "Note Added",
@@ -68,12 +66,12 @@ export function TopicNotes({ topic }: { topic: Topic }) {
       })
 
       setNewNote('')
-      router.refresh()
-    } catch {
+    } catch (error) {
+      console.error('Error adding note:', error)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to save note. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to save note. Please try again.",
       })
     } finally {
       setLoading(false)
@@ -86,23 +84,32 @@ export function TopicNotes({ topic }: { topic: Topic }) {
       const response = await fetch(`/api/topics/${topic.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editedTopic)
+        body: JSON.stringify({
+          title: editedTopic.title,
+          description: editedTopic.description,
+          category: editedTopic.category
+        })
       })
 
-      if (!response.ok) throw new Error()
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to update topic')
+      }
 
+      const updatedTopic = await response.json()
+      setTopic(updatedTopic)
+      setIsEditing(false)
+      
       toast({
         title: "Topic Updated",
         description: "Topic has been updated successfully.",
       })
-
-      setIsEditing(false)
-      router.refresh()
-    } catch {
+    } catch (error) {
+      console.error('Error updating topic:', error)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to update topic. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to update topic. Please try again.",
       })
     } finally {
       setLoading(false)
@@ -116,7 +123,10 @@ export function TopicNotes({ topic }: { topic: Topic }) {
         method: 'DELETE'
       })
 
-      if (!response.ok) throw new Error()
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to delete topic')
+      }
 
       toast({
         title: "Topic Deleted",
@@ -124,12 +134,12 @@ export function TopicNotes({ topic }: { topic: Topic }) {
       })
 
       router.push('/study-notes')
-      router.refresh()
-    } catch {
+    } catch (error) {
+      console.error('Error deleting topic:', error)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to delete topic. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to delete topic. Please try again.",
       })
     } finally {
       setLoading(false)
@@ -144,10 +154,22 @@ export function TopicNotes({ topic }: { topic: Topic }) {
       const response = await fetch(`/api/topics/${topic.id}/notes/${editingNote.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: editingNote.content })
+        body: JSON.stringify({ content: editingNote.content.trim() })
       })
 
-      if (!response.ok) throw new Error()
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to update note')
+      }
+
+      const updatedNote = await response.json()
+      setTopic(prev => ({
+        ...prev,
+        notes: prev.notes.map(note => 
+          note.id === editingNote.id ? updatedNote : note
+        ),
+        lastUpdated: new Date()
+      }))
 
       toast({
         title: "Note Updated",
@@ -155,12 +177,12 @@ export function TopicNotes({ topic }: { topic: Topic }) {
       })
 
       setEditingNote(null)
-      router.refresh()
-    } catch {
+    } catch (error) {
+      console.error('Error updating note:', error)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to update note. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to update note. Please try again.",
       })
     } finally {
       setLoading(false)
@@ -174,20 +196,29 @@ export function TopicNotes({ topic }: { topic: Topic }) {
         method: 'DELETE'
       })
 
-      if (!response.ok) throw new Error()
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to delete note')
+      }
+
+      setTopic(prev => ({
+        ...prev,
+        notes: prev.notes.filter(note => note.id !== noteId),
+        lastUpdated: new Date()
+      }))
 
       toast({
         title: "Note Deleted",
-        description: "Note has been deleted successfully.",
+        description: "Your note has been deleted successfully.",
       })
 
       setShowDeleteNoteDialog(null)
-      router.refresh()
-    } catch {
+    } catch (error) {
+      console.error('Error deleting note:', error)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to delete note. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to delete note. Please try again.",
       })
     } finally {
       setLoading(false)

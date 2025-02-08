@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 export async function PUT(
   request: Request,
@@ -24,7 +25,10 @@ export async function PUT(
     return NextResponse.json(note)
   } catch (error) {
     console.error('Error updating note:', error)
-    return NextResponse.json({ error: 'Failed to update note' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to update note' },
+      { status: 500 }
+    )
   }
 }
 
@@ -47,6 +51,9 @@ export async function DELETE(
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error deleting note:', error)
-    return NextResponse.json({ error: 'Failed to delete note' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to delete note' },
+      { status: 500 }
+    )
   }
 } 

@@ -1,16 +1,16 @@
-import { promises as fs } from 'fs'
-import path from 'path'
+import { prisma } from '@/lib/prisma'
 import { TopicsList } from '@/components/study-notes/TopicsList'
 import { AddTopicDialog } from '@/components/study-notes/AddTopicDialog'
 
-async function getTopics() {
-  const filePath = path.join(process.cwd(), 'data', 'topics.json')
-  const fileContents = await fs.readFile(filePath, 'utf8')
-  return JSON.parse(fileContents).topics
-}
-
 export default async function StudyNotesPage() {
-  const topics = await getTopics()
+  const topics = await prisma.topic.findMany({
+    include: {
+      notes: true
+    },
+    orderBy: {
+      dateCreated: 'desc'
+    }
+  })
 
   return (
     <div className="container py-8 px-4 sm:px-6 md:px-8">
@@ -28,4 +28,7 @@ export default async function StudyNotesPage() {
       </div>
     </div>
   )
-} 
+}
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0 

@@ -4,19 +4,17 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { BookOpen, Clock } from 'lucide-react'
 import { format } from 'date-fns'
-import { Note } from '@/types'
+import { Topic } from '@prisma/client'
 
-interface Topic {
-  id: string
-  title: string
-  description: string
-  category: string
-  dateCreated: string
-  lastUpdated: string | null
-  notes: Note[]
+interface TopicWithNotes extends Topic {
+  notes: {
+    id: string;
+    content: string;
+    dateCreated: Date;
+  }[];
 }
 
-export function TopicsList({ topics }: { topics: Topic[] }) {
+export function TopicsList({ topics }: { topics: TopicWithNotes[] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {topics.map((topic, index) => (
