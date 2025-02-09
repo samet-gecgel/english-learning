@@ -162,15 +162,82 @@ body {
 
 /* Rich Text Editor Styles */
 .ProseMirror {
-  @apply outline-none;
+  @apply outline-none text-foreground min-h-[200px];
 }
 
 .ProseMirror p {
-  @apply my-1;
+  @apply my-1 text-foreground;
 }
 
+/* Dark mode için özel stiller */
 .dark .ProseMirror {
+  @apply text-foreground bg-background;
+}
+
+.dark .ProseMirror h1,
+.dark .ProseMirror h2,
+.dark .ProseMirror h3,
+.dark .ProseMirror h4,
+.dark .ProseMirror h5,
+.dark .ProseMirror h6 {
   @apply text-foreground;
+}
+
+.dark .ProseMirror ul,
+.dark .ProseMirror ol {
+  @apply text-foreground;
+}
+
+.dark .ProseMirror blockquote {
+  @apply border-l-4 border-primary/50 pl-4 text-foreground/80;
+}
+
+/* Light mode için özel stiller */
+.light .ProseMirror {
+  @apply text-foreground bg-background;
+}
+
+.light .ProseMirror h1,
+.light .ProseMirror h2,
+.light .ProseMirror h3,
+.light .ProseMirror h4,
+.light .ProseMirror h5,
+.light .ProseMirror h6 {
+  @apply text-foreground;
+}
+
+.light .ProseMirror ul,
+.light .ProseMirror ol {
+  @apply text-foreground;
+}
+
+.light .ProseMirror blockquote {
+  @apply border-l-4 border-primary/50 pl-4 text-foreground/80;
+}
+
+/* Prose stilleri */
+.prose {
+  @apply text-foreground max-w-none;
+}
+
+.prose :where(p):not(:where([class~="not-prose"] *)) {
+  @apply text-foreground;
+}
+
+.prose :where(ul):not(:where([class~="not-prose"] *)) {
+  @apply text-foreground;
+}
+
+.prose :where(ol):not(:where([class~="not-prose"] *)) {
+  @apply text-foreground;
+}
+
+.prose :where(blockquote):not(:where([class~="not-prose"] *)) {
+  @apply border-l-4 border-primary/50 pl-4 text-foreground/80;
+}
+
+.prose :where(h1, h2, h3, h4, h5, h6):not(:where([class~="not-prose"] *)) {
+  @apply text-foreground font-bold;
 }
 
 /* Toolbar için özel stiller */
