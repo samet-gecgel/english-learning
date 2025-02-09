@@ -47,17 +47,11 @@ export function TopicsList({ topics }: { topics: TopicWithNotes[] }) {
                 {topic.title}
               </h2>
               <div 
-                className="text-muted-foreground text-sm mb-4 prose prose-sm"
-                dangerouslySetInnerHTML={{ __html: getFirstParagraph(topic.description) }}
+                className="text-sm text-muted-foreground line-clamp-3 mb-4"
+                dangerouslySetInnerHTML={{ 
+                  __html: getFirstParagraph(topic.content || topic.description) 
+                }}
               />
-              {topic.content && (
-                <div 
-                  className="text-sm text-muted-foreground line-clamp-3 mb-4"
-                  dangerouslySetInnerHTML={{ 
-                    __html: getFirstParagraph(topic.content) 
-                  }}
-                />
-              )}
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <BookOpen className="h-4 w-4" />
