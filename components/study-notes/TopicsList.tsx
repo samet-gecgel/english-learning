@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { BookOpen, Clock } from 'lucide-react'
 import { format } from 'date-fns'
-import { Topic, Note } from '@prisma/client'
+import { Topic } from '@prisma/client'
 import DOMPurify from 'isomorphic-dompurify'
 
 interface TopicWithNotes extends Topic {

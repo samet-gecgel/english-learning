@@ -6,6 +6,7 @@ import TextStyle from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
+import { Extension } from '@tiptap/core'
 import { 
   FaBold, 
   FaItalic, 
@@ -17,6 +18,49 @@ import {
   FaUnlink,
   FaHeading
 } from 'react-icons/fa'
+
+// Özel kısayol extension'ı
+const ShortcutExtension = Extension.create({
+  name: 'shortcut',
+  addKeyboardShortcuts() {
+    return {
+      'Space': () => {
+        const { selection, doc } = this.editor.state
+        const { from } = selection
+        const textBefore = doc.textBetween(Math.max(0, from - 2), from)
+
+        if (textBefore === '/b') {
+          this.editor
+            .chain()
+            .deleteRange({ from: from - 2, to: from })
+            .toggleBold()
+            .run()
+          return true
+        }
+
+        if (textBefore === '/i') {
+          this.editor
+            .chain()
+            .deleteRange({ from: from - 2, to: from })
+            .toggleItalic()
+            .run()
+          return true
+        }
+
+        if (textBefore === '/u') {
+          this.editor
+            .chain()
+            .deleteRange({ from: from - 2, to: from })
+            .toggleUnderline()
+            .run()
+          return true
+        }
+
+        return false
+      }
+    }
+  }
+})
 
 interface RichTextEditorProps {
   content: string
@@ -30,6 +74,7 @@ const RichTextEditor = ({ content = '', onChange }: RichTextEditorProps) => {
       TextStyle,
       Color,
       Underline,
+      ShortcutExtension,  // Kısayol extension'ını ekle
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
