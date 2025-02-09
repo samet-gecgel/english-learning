@@ -1,29 +1,22 @@
-import { promises as fs } from 'fs'
-import path from 'path'
-import { WordsData } from '@/types'
-import { QuizComponent } from '@/components/quiz/QuizComponent'
-
-async function getWords() {
-  const filePath = path.join(process.cwd(), 'data', 'words.json')
-  const fileContents = await fs.readFile(filePath, 'utf8')
-  const data: WordsData = JSON.parse(fileContents)
-  return data.words
-}
+import { prisma } from '@/lib/prisma'
+import { Quiz } from '@/components/quiz/Quiz'
 
 export default async function QuizPage() {
-  const words = await getWords()
+  const words = await prisma.word.findMany({
+    orderBy: {
+      dateAdded: 'desc'
+    }
+  })
 
   return (
-    <div className="container py-8 px-4 sm:px-6 md:px-8">
-      <div className="flex flex-col gap-6">
-        <div>
-          <h1 className="text-3xl font-bold">Quiz</h1>
-          <p className="text-muted-foreground mt-2">
-            Test your vocabulary knowledge with different types of questions.
-          </p>
-        </div>
-        <QuizComponent words={words} />
+    <div className="container py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Quiz</h1>
+        <Quiz words={words} />
       </div>
     </div>
   )
-} 
+}
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0 

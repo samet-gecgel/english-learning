@@ -6,9 +6,63 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{ts,tsx}",
   ],
   theme: {
   	extend: {
+  		typography: {
+  			DEFAULT: {
+  				css: {
+  					maxWidth: '100%',
+  					color: 'var(--tw-prose-body)',
+  					'[class~="lead"]': {
+  						color: 'var(--tw-prose-lead)',
+  					},
+  					strong: {
+  						color: 'var(--tw-prose-bold)',
+  					},
+  					'ol[type="A"]': {
+  						'--list-counter-style': 'upper-alpha',
+  					},
+  					'ol[type="a"]': {
+  						'--list-counter-style': 'lower-alpha',
+  					},
+  					'ol[type="A" s]': {
+  						'--list-counter-style': 'upper-alpha',
+  					},
+  					'ol[type="a" s]': {
+  						'--list-counter-style': 'lower-alpha',
+  					},
+  					'ol[type="I"]': {
+  						'--list-counter-style': 'upper-roman',
+  					},
+  					'ol[type="i"]': {
+  						'--list-counter-style': 'lower-roman',
+  					},
+  					'ol[type="I" s]': {
+  						'--list-counter-style': 'upper-roman',
+  					},
+  					'ol[type="i" s]': {
+  						'--list-counter-style': 'lower-roman',
+  					},
+  					'ol[type="1"]': {
+  						'--list-counter-style': 'decimal',
+  					},
+  					'ol > li': {
+  						position: 'relative',
+  					},
+  					'ol > li::marker': {
+  						color: 'var(--tw-prose-counters)',
+  					},
+  					'ul > li': {
+  						position: 'relative',
+  					},
+  					'ul > li::marker': {
+  						color: 'var(--tw-prose-bullets)',
+  					},
+  				},
+  			},
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -77,6 +131,9 @@ const config: Config = {
 		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+  ],
 };
 export default config;

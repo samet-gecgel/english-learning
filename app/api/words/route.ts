@@ -11,14 +11,24 @@ export async function GET() {
         dateAdded: 'desc'
       }
     })
+
+    console.log('Fetched words:', words) // Gelen verileri kontrol edelim
+
+    if (!words || !words.length) {
+      return NextResponse.json(
+        { error: 'No words found' },
+        { status: 404 }
+      )
+    }
+
     return NextResponse.json(words)
-  } catch {
+  } catch (error) {
+    console.error('Error fetching words:', error)
     return NextResponse.json(
       { error: 'Failed to fetch words' },
       { status: 500 }
     )
   }
-
 }
 
 export async function POST(request: Request) {

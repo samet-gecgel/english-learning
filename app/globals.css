@@ -159,3 +159,34 @@ body {
     border: 2px solid transparent;
   }
 }
+
+/* Rich Text Editor Styles */
+.ProseMirror {
+  @apply outline-none;
+}
+
+.ProseMirror p {
+  @apply my-1;
+}
+
+.dark .ProseMirror {
+  @apply text-foreground;
+}
+
+/* Toolbar için özel stiller */
+.dark .tiptap-toolbar {
+  @apply bg-background border-border;
+}
+
+.dark .tiptap-button {
+  @apply text-foreground hover:bg-muted;
+}
+
+.dark .tiptap-button.is-active {
+  @apply bg-muted;
+}
+
+/* Color picker için özel stil */
+.dark input[type="color"] {
+  @apply bg-background border-border;
+}

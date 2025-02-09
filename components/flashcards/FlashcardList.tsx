@@ -5,12 +5,14 @@ import { useState, useEffect } from 'react'
 import { Flashcard } from './Flashcard'
 import { Button } from '@/components/ui/button'
 import { ArrowLeftIcon, ArrowRightIcon, ShuffleIcon } from 'lucide-react'
+import { useSpeech } from '@/hooks/useSpeech'
 
 interface FlashcardListProps {
   words: Word[]
 }
 
 export function FlashcardList({ words }: FlashcardListProps) {
+  const { speak: speakHook } = useSpeech()
   const [mounted, setMounted] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [shuffledWords, setShuffledWords] = useState<Word[]>([])
@@ -43,6 +45,10 @@ export function FlashcardList({ words }: FlashcardListProps) {
     setShowTranslation(false)
   }
 
+  const handleSpeak = (text: string, isEnglish: boolean) => {
+    speakHook(text, isEnglish ? 'en-US' : 'tr-TR')
+  }
+
   if (!mounted || shuffledWords.length === 0) {
     return (
       <div className="flex flex-col items-center gap-6">
@@ -58,6 +64,7 @@ export function FlashcardList({ words }: FlashcardListProps) {
           word={shuffledWords[currentIndex]}
           showTranslation={showTranslation}
           onFlip={() => setShowTranslation(!showTranslation)}
+          onSpeak={handleSpeak}
         />
       </div>
 

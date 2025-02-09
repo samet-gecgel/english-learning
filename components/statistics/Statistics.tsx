@@ -1,11 +1,19 @@
 'use client'
 
-import { Word } from '@/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 import { format, subDays } from 'date-fns'
 
+// Prisma import'unu kaldırıyoruz ve kendi tipimizi tanımlıyoruz
+interface Word {
+  id: string
+  word: string
+  translation: string
+  lastReviewed: Date | null
+}
+
 interface StatisticsProps {
-  words: Word[]
+  words: Word[] | null | undefined
 }
 
 export function Statistics({ words }: StatisticsProps) {
@@ -19,12 +27,7 @@ export function Statistics({ words }: StatisticsProps) {
     }
   }).reverse()
 
-  const totalWords = words.length
-  const learnedWords = words.filter(word => word.lastReviewed).length
-  const streak = calculateStreak()
-  const successRate = (learnedWords / totalWords * 100).toFixed(1)
-
-  function calculateStreak() {
+  const calculateStreak = () => {
     let streak = 0
     let currentDate = new Date()
     
@@ -43,43 +46,52 @@ export function Statistics({ words }: StatisticsProps) {
     return streak
   }
 
+  // Tip güvenliği için Array.isArray kontrolü ekleyelim
+  const safeWords = Array.isArray(words) ? words : []
+  
+  const totalWords = safeWords.length
+  const learnedWords = safeWords.filter(word => word?.lastReviewed).length
+  const streak = calculateStreak()
+  const successRate = totalWords > 0 ? (learnedWords / totalWords * 100).toFixed(1) : '0'
+
   return (
-    <div className="grid gap-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Words</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalWords}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Words Learned</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{learnedWords}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Daily Streak</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{streak} days</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{successRate}%</div>
-          </CardContent>
-        </Card>
-      </div>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Total Words</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{totalWords}</div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Learned Words</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{learnedWords}</div>
+          <Progress value={Number(successRate)} className="mt-2" />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{successRate}%</div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Daily Streak</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{streak} days</div>
+        </CardContent>
+      </Card>
 
       {/* Weekly Progress */}
       <Card>

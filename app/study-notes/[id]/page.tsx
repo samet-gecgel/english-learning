@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
-import { TopicNotes } from '@/components/study-notes/TopicNotes'
+import TopicDetail from '@/components/study-notes/TopicDetail'
 
 export default async function TopicPage({ params }: { params: { id: string } }) {
   const topic = await prisma.topic.findUnique({
@@ -11,8 +11,10 @@ export default async function TopicPage({ params }: { params: { id: string } }) 
   if (!topic) notFound()
 
   return (
-    <div className="container py-8 px-4 sm:px-6 md:px-8">
-      <TopicNotes topic={topic} />
+    <div className="min-h-screen flex justify-center">
+      <div className="w-full lg:w-1/2 px-4 py-8">
+        <TopicDetail topic={topic} />
+      </div>
     </div>
   )
 }

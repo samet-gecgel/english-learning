@@ -1,8 +1,35 @@
-
 import Link from "next/link"
 import { ArrowRightIcon } from "@heroicons/react/24/outline"
+import { prisma } from '@/lib/prisma'
+import { Statistics } from '@/components/statistics/Statistics'
+
+interface Word {
+  id: string
+  word: string
+  translation: string
+  lastReviewed: Date | null
+}
+
+// Sayfayı dinamik yap
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function Home() {
+  let words: Word[] = []
+  
+  try {
+    words = await prisma.word.findMany({
+      select: {
+        id: true,
+        word: true,
+        translation: true,
+        lastReviewed: true
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching words:', error)
+  }
+
   return (
     <div className="flex flex-col gap-16 pb-8">
       {/* Hero Section */}
@@ -74,6 +101,8 @@ export default async function Home() {
           </Link>
         </div>
       </section>
+
+      <Statistics words={words} />
     </div>
   )
 }

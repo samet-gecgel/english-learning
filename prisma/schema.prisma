@@ -9,8 +9,8 @@ datasource db {
 
 model Word {
   id            String    @id @default(cuid())
-  word          String
-  translation   String
+  word          String    // İngilizce kelime
+  translation   String    // Türkçe çevirisi
   level         String
   pronunciation String?
   usageNotes    String?
@@ -33,6 +33,7 @@ model Topic {
   notes       Note[]
   dateCreated DateTime  @default(now())
   lastUpdated DateTime?
+  content     String    @default("") @db.Text
 }
 
 model Note {

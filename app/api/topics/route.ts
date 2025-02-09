@@ -30,14 +30,17 @@ export async function POST(request: Request) {
 
     const topic = await prisma.topic.create({
       data: {
-        ...data,
+        title: data.title,
+        description: data.description,
+        category: data.category,
+        content: data.content,
         dateCreated: new Date(),
-        lastUpdated: null
       }
     })
 
-    return NextResponse.json(topic, { status: 201 })
-  } catch {
+    return NextResponse.json(topic)
+  } catch (error) {
+    console.error('Error creating topic:', error)
     return NextResponse.json(
       { error: 'Failed to create topic' },
       { status: 500 }

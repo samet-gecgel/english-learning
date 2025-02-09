@@ -7,110 +7,143 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import RichTextEditor from '@/components/RichTextEditor'
 import { useRouter } from 'next/navigation'
-import { useToast } from '@/hooks/use-toast'
-import { PlusIcon } from 'lucide-react'
 
 export function AddTopicDialog() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [title, setTitle] = useState('')
+  const [category, setCategory] = useState('')
+  const [content, setContent] = useState('')
   const router = useRouter()
-  const { toast } = useToast()
-  const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: 'Grammar' // varsayılan kategori
-  })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+  const handleDialogClose = (open: boolean) => {
+    // Dialog kapanmaya çalışıyorsa (open === false)
+    if (!open) {
+      // İçerik girilmişse onay iste
+      if (title || category || content) {
+        if (confirm('You have unsaved changes. Are you sure you want to close?')) {
+          setIsOpen(false)
+          resetForm()
+        }
+      } else {
+        // İçerik boşsa direkt kapat
+        setIsOpen(false)
+        resetForm()
+      }
+    } else {
+      setIsOpen(true)
+    }
+  }
 
+  const resetForm = () => {
+    setTitle('')
+    setCategory('')
+    setContent('')
+  }
+
+  const handleSubmit = async () => {
     try {
       const response = await fetch('/api/topics', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          category,
+          description: content,
+          content: content,
+        }),
       })
 
-      if (!response.ok) throw new Error()
+      if (!response.ok) {
+        throw new Error('Failed to create topic')
+      }
 
-      toast({
-        title: "Topic Created",
-        description: "Your new topic has been created successfully.",
-      })
-
-      setOpen(false)
+      setIsOpen(false)
+      resetForm()
       router.refresh()
-    } catch {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to create topic. Please try again.",
-      })
-    } finally {
-      setLoading(false)
+    } catch (error) {
+      console.error('Error creating topic:', error)
+      alert('Failed to create topic. Please try again.')
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Add Topic
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
+    <Dialog open={isOpen} onOpenChange={handleDialogClose}>
+      <Button onClick={() => setIsOpen(true)}>
+        Add Topic
+      </Button>
+      <DialogContent 
+        className="max-w-3xl"
+        onPointerDownOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Add New Topic</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Title</label>
+            <Label htmlFor="title">Title</Label>
             <Input
-              required
-              value={formData.title}
-              onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              placeholder="e.g., Present Perfect Tense"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Description</label>
-            <Textarea
-              required
-              value={formData.description}
-              onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Brief description of the topic..."
-              className="min-h-[100px]"
-            />
+            <Label htmlFor="category">Category</Label>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Grammar-Tenses">Grammar - Tenses</SelectItem>
+                <SelectItem value="Grammar-Articles">Grammar - Articles</SelectItem>
+                <SelectItem value="Grammar-Modals">Grammar - Modals</SelectItem>
+                <SelectItem value="Grammar-Conditionals">Grammar - Conditionals</SelectItem>
+                <SelectItem value="Grammar-Prepositions">Grammar - Prepositions</SelectItem>
+                <SelectItem value="Grammar-Other">Grammar - Other</SelectItem>
+                <SelectItem value="Vocabulary-Words">Vocabulary - Words</SelectItem>
+                <SelectItem value="Vocabulary-Phrases">Vocabulary - Phrases</SelectItem>
+                <SelectItem value="Vocabulary-Idioms">Vocabulary - Idioms</SelectItem>
+                <SelectItem value="Pronunciation">Pronunciation</SelectItem>
+                <SelectItem value="Speaking">Speaking</SelectItem>
+                <SelectItem value="Writing">Writing</SelectItem>
+                <SelectItem value="Reading">Reading</SelectItem>
+                <SelectItem value="Listening">Listening</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Category</label>
-            <select
-              value={formData.category}
-              onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-              className="w-full rounded-md border p-2"
-            >
-              <option value="Grammar">Grammar</option>
-              <option value="Vocabulary">Vocabulary</option>
-              <option value="Pronunciation">Pronunciation</option>
-              <option value="Writing">Writing</option>
-              <option value="Speaking">Speaking</option>
-              <option value="Other">Other</option>
-            </select>
+            <Label>Content</Label>
+            <RichTextEditor
+              content={content}
+              onChange={setContent}
+            />
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Creating...' : 'Create Topic'}
-          </Button>
-        </form>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>
+              Create Topic
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   )
