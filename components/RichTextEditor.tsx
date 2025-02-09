@@ -27,9 +27,10 @@ const ShortcutExtension = Extension.create({
       'Space': () => {
         const { selection, doc } = this.editor.state
         const { from } = selection
-        const textBefore = doc.textBetween(Math.max(0, from - 2), from)
+        const textBefore = doc.textBetween(Math.max(0, from - 6), from)
 
-        if (textBefore === '/b') {
+        // Temel formatlamalar
+        if (textBefore.endsWith('/b')) {
           this.editor
             .chain()
             .deleteRange({ from: from - 2, to: from })
@@ -38,7 +39,7 @@ const ShortcutExtension = Extension.create({
           return true
         }
 
-        if (textBefore === '/i') {
+        if (textBefore.endsWith('/i')) {
           this.editor
             .chain()
             .deleteRange({ from: from - 2, to: from })
@@ -47,7 +48,7 @@ const ShortcutExtension = Extension.create({
           return true
         }
 
-        if (textBefore === '/u') {
+        if (textBefore.endsWith('/u')) {
           this.editor
             .chain()
             .deleteRange({ from: from - 2, to: from })
@@ -56,6 +57,88 @@ const ShortcutExtension = Extension.create({
           return true
         }
 
+        // Listeler
+        if (textBefore.endsWith('/list')) {
+          this.editor
+            .chain()
+            .deleteRange({ from: from - 5, to: from })
+            .toggleBulletList()
+            .run()
+          return true
+        }
+
+        if (textBefore.endsWith('/number')) {
+          this.editor
+            .chain()
+            .deleteRange({ from: from - 7, to: from })
+            .toggleOrderedList()
+            .run()
+          return true
+        }
+
+        // Başlıklar
+        if (textBefore.endsWith('/h1')) {
+          this.editor
+            .chain()
+            .deleteRange({ from: from - 3, to: from })
+            .toggleHeading({ level: 1 })
+            .run()
+          return true
+        }
+
+        if (textBefore.endsWith('/h2')) {
+          this.editor
+            .chain()
+            .deleteRange({ from: from - 3, to: from })
+            .toggleHeading({ level: 2 })
+            .run()
+          return true
+        }
+
+        if (textBefore.endsWith('/h3')) {
+          this.editor
+            .chain()
+            .deleteRange({ from: from - 3, to: from })
+            .toggleHeading({ level: 3 })
+            .run()
+
+          return true
+
+        }
+
+        // Alıntı
+        if (textBefore.endsWith('/quote')) {
+          this.editor
+            .chain()
+            .deleteRange({ from: from - 6, to: from })
+            .toggleBlockquote()
+            .run()
+          return true
+        }
+
+        return false
+      },
+      'Shift-Enter': () => {
+        if (this.editor.isActive('blockquote')) {
+          this.editor
+            .chain()
+            .splitBlock()
+            .run()
+          return true
+        }
+        return false
+      },
+      'Enter': () => {
+        if (this.editor.isActive('blockquote')) {
+          
+          this.editor
+            .chain()
+            .splitBlock()
+            .toggleBlockquote()
+            .run()
+            
+          return true
+        }
         return false
       }
     }
@@ -74,7 +157,7 @@ const RichTextEditor = ({ content = '', onChange }: RichTextEditorProps) => {
       TextStyle,
       Color,
       Underline,
-      ShortcutExtension,  // Kısayol extension'ını ekle
+      ShortcutExtension,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -88,7 +171,7 @@ const RichTextEditor = ({ content = '', onChange }: RichTextEditorProps) => {
     },
     editorProps: {
       attributes: {
-        class: 'prose dark:prose-invert focus:outline-none max-w-none min-h-[200px] max-h-[400px] overflow-y-auto',
+        class: 'prose dark:prose-invert focus:outline-none max-w-none',
       },
     },
   })
@@ -216,10 +299,10 @@ const RichTextEditor = ({ content = '', onChange }: RichTextEditorProps) => {
         </div>
       </div>
 
-      <div className="p-4 min-h-[200px] max-h-[400px] overflow-y-auto prose prose-sm max-w-none dark:prose-invert">
+      <div className="p-4 min-h-[200px] max-h-[400px] overflow-y-auto">
         <EditorContent 
           editor={editor} 
-          className="min-h-[200px] focus:outline-none"
+          className="focus:outline-none"
         />
       </div>
     </div>
